@@ -22,14 +22,8 @@ GNU General Public License for more details.
 #include "Primitive.h"
 #include "netadr.h"
 
-#ifdef NEW_ENGINE_INTERFACE
-#define ref_menu_params_t ref_viewpass_t
-#define ref_menu_params_s ref_viewpass_s
-#define ui_textfuncs_t    ui_extendedfuncs_t
-#else
 #define ref_menu_params_t ref_params_t
 #define ref_menu_params_s ref_params_s
-#endif
 
 class EngFuncs
 {
@@ -264,19 +258,11 @@ public:
 	{ return engfuncs.pfnGetModeString( mode ); }
 	static inline int COM_SaveFile( const char *filename, const void *buffer, int len )
 	{
-#ifdef NEW_ENGINE_INTERFACE
-		return engfuncs.COM_SaveFile( filename, buffer, len );
-#else
 		return false;
-#endif
 	}
 	static inline int DeleteFile( const char *filename )
 	{
-#ifdef NEW_ENGINE_INTERFACE
-		return engfuncs.COM_RemoveFile( filename );
-#else
 		return false;
-#endif
 	}
 	static ui_enginefuncs_t engfuncs;
 
