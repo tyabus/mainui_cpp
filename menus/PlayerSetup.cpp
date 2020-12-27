@@ -33,25 +33,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define MAX_PLAYERMODELS	100
 
-static struct
-{
-	const char *name;
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-} g_LogoColors[] =
-{
-{ "#Valve_Orange", 255, 120, 24  },
-{ "#Valve_Yellow",	225, 180, 24  },
-{ "#Valve_Blue",   0,   60,  255 },
-{ "#Valve_Ltblue", 0,   167, 255 },
-{ "#Valve_Green",  0,   167, 0   },
-{ "#Valve_Red",    255, 43,  0   },
-{ "#Valve_Brown",  123, 73,  0   },
-{ "#Valve_Ltgray", 100, 100, 100 },
-{ "#Valve_Dkgray", 36,  36,  36  },
-};
-
 static class CMenuPlayerSetup : public CMenuFramework
 {
 private:
@@ -62,10 +43,7 @@ public:
 
 	void SetConfig();
 	void UpdateModel();
-	void UpdateLogo();
 	void ApplyColorToImagePreview();
-	void ApplyColorToLogoPreview();
-	void WriteNewLogo();
 	void SaveAndPopMenu() override;
 
 	class CModelListModel : public CStringArrayModel
@@ -78,16 +56,6 @@ public:
 		char models[MAX_PLAYERMODELS][CS_SIZE];
 	} modelsModel;
 
-	class CLogosListModel : public CStringArrayModel
-	{
-	public:
-		CLogosListModel() : CStringArrayModel( (const char *)logos, CS_SIZE, 0 ) {}
-		void Update();
-
-	private:
-		char logos[MAX_PLAYERMODELS][CS_SIZE];
-	} logosModel;
-
 	CMenuPlayerModelView	view;
 
 	CMenuCheckBox	showModels;
@@ -96,46 +64,12 @@ public:
 	CMenuSlider	bottomColor;
 
 	CMenuField	name;
-	CMenuSpinControl	model;
-
-	class CMenuLogoPreview : public CMenuBaseItem
-	{
-	public:
-		virtual void Draw();
-		int r, g, b;
-		HIMAGE hImage;
-	} logoImage;
-
-	CMenuSpinControl	logo;
-	CMenuSpinControl	logoColor;
+	CMenuSpinControl model;
 
 	CMenuYesNoMessageBox msgBox;
 
-	bool hideModels, hideLogos;
+	bool hideModels;
 } uiPlayerSetup;
-
-void CMenuPlayerSetup::CMenuLogoPreview::Draw()
-{
-	if( !hImage )
-	{
-		// draw the background
-		UI_FillRect( m_scPos, m_scSize, uiPromptBgColor );
-
-		UI_DrawString( font, m_scPos, m_scSize, L( "No logo" ), colorBase, m_scChSize, QM_CENTER, ETF_SHADOW );
-	}
-	else
-	{
-		EngFuncs::PIC_Set( hImage, r, g, b, 255 );
-		EngFuncs::PIC_DrawTrans( m_scPos, m_scSize );
-	}
-
-	// draw the rectangle
-	if( eFocusAnimation == QM_HIGHLIGHTIFFOCUS && IsCurrentSelected() )
-		UI_DrawRectangle( m_scPos, m_scSize, uiInputTextColor );
-	else
-		UI_DrawRectangle( m_scPos, m_scSize, uiInputFgColor );
-
-}
 
 /*
 =================
@@ -172,44 +106,6 @@ void CMenuPlayerSetup::CModelListModel::Update( void )
 
 /*
 =================
-CMenuPlayerSetup::FindLogos
-
-=================
-*/
-void CMenuPlayerSetup::CLogosListModel::Update( void )
-{
-	char	**filenames;
-	int numFiles, i;
-
-	m_iCount = 0;
-
-	// Get file list
-	filenames = EngFuncs::GetFilesList( "logos/*.bmp", &numFiles, FALSE );
-
-	if( !filenames || !numFiles )
-	{
-		m_iCount = 0;
-		return;
-	}
-
-	// build the model list
-	for( i = 0; i < numFiles; i++ )
-	{
-		char logoFileName[CS_SIZE];
-
-		Q_strncpy( logoFileName, filenames[i], sizeof( logos[0] ) );
-		COM_FileBase( logoFileName, logos[m_iCount] );
-
-		// ignore remapped.bmp
-		if( !stricmp( logos[m_iCount], "remapped" ) )
-			continue;
-
-		m_iCount++;
-	}
-}
-
-/*
-=================
 UI_PlayerSetup_SetConfig
 =================
 */
@@ -221,7 +117,6 @@ void CMenuPlayerSetup::SetConfig( void )
 	bottomColor.WriteCvar();
 	hiModels.WriteCvar();
 	showModels.WriteCvar();
-	WriteNewLogo();
 }
 
 void CMenuPlayerSetup::SaveAndPopMenu()
@@ -265,53 +160,10 @@ void CMenuPlayerSetup::UpdateModel()
 		EngFuncs::SetModel( view.ent, image );
 }
 
-void CMenuPlayerSetup::UpdateLogo()
-{
-	char image[256];
-	const char *mdl = logo.GetCurrentString();
-
-	if( !mdl || !mdl[0] )
-	{
-		return;
-	}
-
-	snprintf( image, 256, "logos/%s.bmp", mdl );
-	logoImage.hImage = EngFuncs::PIC_Load( image, 0 );
-	ApplyColorToLogoPreview();
-
-	EngFuncs::CvarSetString( "cl_logofile", mdl );
-	logoColor.WriteCvar();
-}
-
 void CMenuPlayerSetup::ApplyColorToImagePreview()
 {
 	EngFuncs::ProcessImage( view.hPlayerImage, -1,
 		topColor.GetCurrentValue(), bottomColor.GetCurrentValue() );
-}
-
-void CMenuPlayerSetup::ApplyColorToLogoPreview()
-{
-	const char *logoColorStr = logoColor.GetCurrentString();
-
-	for( size_t i = 0; i < ARRAYSIZE( g_LogoColors ) && logoColorStr; i++ )
-	{
-		if( !stricmp( logoColorStr, L( g_LogoColors[i].name )))
-		{
-			logoImage.r = g_LogoColors[i].r;
-			logoImage.g = g_LogoColors[i].g;
-			logoImage.b = g_LogoColors[i].b;
-			return;
-		}
-	}
-
-	logoImage.r = 255;
-	logoImage.g = 255;
-	logoImage.b = 255;
-}
-
-void CMenuPlayerSetup::WriteNewLogo( void )
-{
-
 }
 
 /*
@@ -323,7 +175,7 @@ void CMenuPlayerSetup::_Init( void )
 {
 	int addFlags = 0;
 
-	hideModels = hideLogos = false;
+	hideModels = false;
 
 	// disable playermodel preview for HLRally to prevent crash
 	if( !stricmp( gMenu.m_gameinfo.gamefolder, "hlrally" ))
@@ -403,44 +255,7 @@ void CMenuPlayerSetup::_Init( void )
 	AddButton( L( "Adv options" ), "", PC_ADV_OPT, UI_GameOptions_Menu );
 	gameOpt->SetGrayed( !UI_AdvUserOptions_IsAvailable() );
 
-
-	if( !hideLogos )
-	{
-		logosModel.Update();
-		if( !logosModel.GetRows() )
-		{
-			// don't add to framework
-			hideLogos = true;
-		}
-		else
-		{
-			static const char *itemlist[ARRAYSIZE( g_LogoColors )];
-			static CStringArrayModel colors( itemlist, ARRAYSIZE( g_LogoColors ) );
-			for( size_t i = 0; i < ARRAYSIZE( g_LogoColors ); i++ )
-				itemlist[i] = L( g_LogoColors[i].name );
-
-			logoImage.SetRect( 72, 230 + m_iBtnsNum * 50 + 10, 200, 200 );
-
-			logo.Setup( &logosModel );
-			logo.LinkCvar( "cl_logofile", CMenuEditable::CVAR_STRING );
-			logo.onChanged = VoidCb( &CMenuPlayerSetup::UpdateLogo );
-			logo.SetRect( 72, logoImage.pos.y + logoImage.size.h + UI_OUTLINE_WIDTH, 200, 32 );
-
-			logoColor.Setup( &colors );
-			logoColor.LinkCvar( "cl_logocolor", CMenuEditable::CVAR_STRING );
-			logoColor.onChanged = VoidCb( &CMenuPlayerSetup::ApplyColorToLogoPreview );;
-			logoColor.SetRect( 72, logo.pos.y + logo.size.h + UI_OUTLINE_WIDTH, 200, 32 );
-		}
-	}
-
 	AddItem( name );
-	if( !hideLogos )
-	{
-		UpdateLogo();
-		AddItem( logo );
-		AddItem( logoColor );
-		AddItem( logoImage );
-	}
 
 	if( !(gMenu.m_gameinfo.flags & GFL_NOMODELS) )
 	{
@@ -459,7 +274,6 @@ void CMenuPlayerSetup::_Init( void )
 
 void CMenuPlayerSetup::Reload()
 {
-	if( !hideLogos ) UpdateLogo();
 	if( !hideModels ) UpdateModel();
 }
 
