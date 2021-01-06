@@ -105,6 +105,7 @@ set(MAINUI_FONT_RENDER_SOURCES
 set(MAINUI_SOURCES
 	miniutl/utlmemory.cpp
 	miniutl/bitstring.cpp
+	miniutl/utlbuffer.cpp
 	unicode_strtools.cpp
 	EventSystem.cpp
 	EngineCallback.cpp
