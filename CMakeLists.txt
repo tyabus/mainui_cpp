@@ -103,8 +103,6 @@ set(MAINUI_FONT_RENDER_SOURCES
 )
 
 set(MAINUI_SOURCES
-	miniutl/utlmemory.cpp
-	miniutl/bitstring.cpp
 	unicode_strtools.cpp
 	EventSystem.cpp
 	EngineCallback.cpp
@@ -117,6 +115,15 @@ set(MAINUI_SOURCES
 	Scissor.cpp
 	udll_int.cpp
 	WindowSystem.cpp
+)
+
+set(MINIUTL_SOURCES
+        miniutl/bitstring.cpp
+        miniutl/generichash.cpp
+        miniutl/strtools.cpp
+        miniutl/utlbuffer.cpp
+        miniutl/utlmemory.cpp
+        miniutl/utlstring.cpp
 )
 
 if(CS16CLIENT)
@@ -133,6 +140,7 @@ endif()
 list(APPEND MAINUI_SOURCES ${MAINUI_CONTROLS_SOURCES})
 list(APPEND MAINUI_SOURCES ${MAINUI_MENUS_SOURCES})
 list(APPEND MAINUI_SOURCES ${MAINUI_FONT_RENDER_SOURCES})
+list(APPEND MAINUI_SOURCES ${MINIUTL_SOURCES})
 add_library (${MAINUI_LIBRARY} SHARED ${MAINUI_SOURCES})
 
 if(NOT WIN32 AND NOT MINGW)
