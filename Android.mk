@@ -85,7 +85,6 @@ LOCAL_SRC_FILES := \
 	font/BitmapFont.cpp				\
 	miniutl/utlmemory.cpp				\
 	miniutl/bitstring.cpp				\
-	miniutl/utlbuffer.cpp				\
 	unicode_strtools.cpp				\
 	EventSystem.cpp                                 \
 	BaseMenu.cpp                                    \
