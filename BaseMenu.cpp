@@ -1128,15 +1128,10 @@ void UI_OpenUpdatePage( bool engine, bool preferstore )
 
 	if( engine || !gMenu.m_gameinfo.update_url[0] )
 	{
-#ifndef XASH_DISABLE_FWGS_EXTENSIONS
 		if( preferstore )
 			updateUrl = PLATFORM_UPDATE_PAGE;
 		else
 			updateUrl = GENERIC_UPDATE_PAGE;
-#else
-		// TODO: Replace by macro for mainui_cpp modders?
-		updateUrl = "https://github.com/FWGS/xash3d/releases/latest";
-#endif
 	}
 	else
 	{

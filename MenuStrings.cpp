@@ -263,10 +263,6 @@ static void Localize_AddToDictionary( const char *name, const char *lang )
 
 		Q_UTF16ToUTF8( autf16, afile, ansiLength, STRINGCONVERT_ASSERT_REPLACE );
 
-#ifdef XASH_DISABLE_FWGS_EXTENSIONS
-		UTFToCP1251( afile, afile, ansiLength, ansiLength );
-#endif // XASH_DISABLE_FWGS_EXTENSIONS
-
 		pfile = EngFuncs::COM_ParseFile( pfile, token );
 
 		if( stricmp( token, "lang" ))

@@ -434,7 +434,6 @@ Converting to single-byte not necessary anymore, as UI uses custom font render w
 */
 int Con_UtfProcessChar( int in )
 {
-#ifndef XASH_DISABLE_FWGS_EXTENSIONS
 	static int m = -1, k = 0; //multibyte state
 	static int uc = 0; //unicode char
 
@@ -499,18 +498,6 @@ int Con_UtfProcessChar( int in )
 		// return '?';
 	}
 	return 0;
-#else
-	if( in >= 0x80 && in <= 0xBF )
-	{
-		return table_cp1251[in - 0x80];
-	}
-	else if( in >= 0xC0 && in <= 0xFF )
-	{
-		return in - 0xC0 + 0x410;
-	}
-
-	return in;
-#endif
 }
 
 /*

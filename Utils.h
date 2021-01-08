@@ -224,9 +224,7 @@ inline bool IsEscape( int key )
 	switch( key )
 	{
 	case K_ESCAPE:
-#ifndef XASH_DISABLE_FWGS_EXTENSIONS
 	case K_B_BUTTON:
-#endif
 		return true;
 	}
 	return false;
@@ -238,9 +236,7 @@ inline bool IsEnter( int key )
 	{
 	case K_ENTER:
 	case K_KP_ENTER:
-#ifndef XASH_DISABLE_FWGS_EXTENSIONS
 	case K_A_BUTTON:
-#endif
 		return true;
 	}
 	return false;
