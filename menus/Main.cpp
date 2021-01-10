@@ -66,7 +66,6 @@ private:
 	CMenuPicButton	saveRestore;
 	CMenuPicButton	multiPlayer;
 	CMenuPicButton	customGame;
-	CMenuPicButton	previews;
 	CMenuPicButton	quit;
 
 	// buttons on top right. Maybe should be drawn if fullscreen == 1?
@@ -234,11 +233,6 @@ void CMenuMain::_Init( void )
 	customGame.iFlags |= QMF_NOTIFY;
 	customGame.onReleased = UI_CustomGame_Menu;
 
-	previews.SetNameAndStatus( L( "Previews" ), L( "StringsList_400" ) );
-	previews.SetPicture( PC_PREVIEWS );
-	previews.iFlags |= QMF_NOTIFY;
-	SET_EVENT( previews.onReleased, EngFuncs::ShellExecute( MenuStrings[ IDS_MEDIA_PREVIEWURL ], NULL, false ) );
-
 	quit.SetNameAndStatus( L( "GameUI_GameMenu_Quit" ), L( "StringsList_236" ) );
 	quit.SetPicture( PC_QUIT );
 	quit.iFlags |= QMF_NOTIFY;
@@ -296,7 +290,6 @@ void CMenuMain::_Init( void )
 	if ( bCustomGame )
 		AddItem( customGame );
 
-	AddItem( previews );
 	AddItem( quit );
 	AddItem( minimizeBtn );
 	AddItem( quitButton );
@@ -350,13 +343,7 @@ void CMenuMain::_VidInit( void )
 
 	customGame.SetCoord( 72, bTrainMap ? 530 : 480 );
 
-	previews.SetCoord( 72, (bCustomGame) ? (bTrainMap ? 580 : 530) : (bTrainMap ? 530 : 480) );
-
-	// too short execute string - not a real command
-	if( strlen( MenuStrings[IDS_MEDIA_PREVIEWURL] ) <= 3 )
-		previews.SetGrayed( true );
-
-	quit.SetCoord( 72, (bCustomGame) ? (bTrainMap ? 630 : 580) : (bTrainMap ? 580 : 530));
+	quit.SetCoord( 72, (bCustomGame) ? (bTrainMap ? 580 : 530) : (bTrainMap ? 530 : 480) );
 
 	minimizeBtn.SetRect( uiStatic.width - 72, 13, 32, 32 );
 
