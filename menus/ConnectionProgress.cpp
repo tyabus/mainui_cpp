@@ -92,8 +92,7 @@ public:
 		}
 		else
 		{
-			snprintf( sTitleString, sizeof( sTitleString ) - 1,
-				"%s %s", L( "GameUI_EstablishingConnection" ), pszName );
+			Q_strncpy( sTitleString, L( "GameUI_EstablishingConnection" ), sizeof( sTitleString ) );
 		}
 
 		commonProgress.SetValue( 0 );
