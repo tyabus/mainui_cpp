@@ -82,11 +82,7 @@ public:
 	}
 	void SetServer( const char *pszName )
 	{
-		if( m_iSource == SOURCE_CREATEGAME )
-		{
-			Q_strncpy( sTitleString, L( "GameUI_StartingServer" ), sizeof( sTitleString ) );
-		}
-		else if( !pszName[0] )
+		if( m_iSource == SOURCE_CREATEGAME || !pszName[0] )
 		{
 			Q_strncpy( sTitleString, L( "GameUI_StartingServer" ), sizeof( sTitleString ) );
 		}
@@ -364,7 +360,7 @@ void UI_ConnectionProgress_Connect( const char *server ) // NULL for local serve
 	}
 	else
 	{
-		uiConnectionProgress.m_iSource = SOURCE_CREATEGAME;
+		uiConnectionProgress.m_iSource = SOURCE_SERVERBROWSER;
 		uiConnectionProgress.SetServer( server );
 		uiConnectionProgress.SetCommonText( L( "GameUI_EstablishingConnection" ) );
 	}
