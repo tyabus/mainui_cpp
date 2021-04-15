@@ -555,10 +555,14 @@ bool UI::Names::CheckIsNameValid(const char *name)
 	} prohibitedNames[] =
 	{
 	{ "default", false, },
+	{ "unconnected", false, },
 	{ "unnamed", false, },
 	{ "Player", false, },
 	{ "<Warrior> Player", false, },
 	{ "Shinji", false, },
+	{ "Fullserver", false, },
+	{ "TR TaLaT", false, },
+	{ ".barney", false, },
 	{ "CSDuragiCOM", true },
 	{ "Nero Claudius", true }, // *purrrt* you found a secret area!
 	};
