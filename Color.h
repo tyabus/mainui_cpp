@@ -71,7 +71,7 @@ private:
 	};
 	bool init;
 public:
-		const ColorWrap r,g,b,a;
+		const ColorWrap a,r,g,b;
 };
 
 #endif // COLOR_H
