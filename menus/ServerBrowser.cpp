@@ -282,7 +282,14 @@ void CMenuGameListModel::Update( void )
 
 void CMenuGameListModel::OnActivateEntry( int line )
 {
-	CMenuServerBrowser::Connect( servers[line] );
+	if( servers.Count() )
+	{
+		CMenuServerBrowser::Connect( servers[line] );
+	}
+	else
+	{
+		uiServerBrowser.joinGame->SetGrayed( true );
+	}
 }
 
 void CMenuGameListModel::AddServerToList(netadr_t adr, const char *info)
