@@ -108,7 +108,6 @@ set(MAINUI_SOURCES
 	EngineCallback.cpp
 	BaseMenu.cpp
 	Btns.cpp
-	Color.cpp
 	MenuStrings.cpp
 	CFGScript.cpp
 	Utils.cpp
