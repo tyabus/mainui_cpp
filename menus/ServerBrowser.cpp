@@ -40,7 +40,6 @@ struct server_t
 	char clientsstr[64];
 	char pingstr[64];
 	bool havePassword;
-	bool isLegacy;
 
 	static int NameCmpAscend( const void *_a, const void *_b )
 	{
@@ -127,18 +126,6 @@ public:
 		case 4: return servers[line].pingstr;
 		default: return NULL;
 		}
-	}
-	bool GetCellColors(int line, int column, unsigned int &textColor, bool &force) const override
-	{
-		if( servers[line].isLegacy )
-		{
-			CColor color = uiPromptTextColor;
-			color.a = color.a * 0.7;
-			textColor = color;
-			force = true;
-			return true;
-		}
-		return false;
 	}
 
 	void OnActivateEntry(int line) override;
@@ -268,8 +255,6 @@ void CMenuGameListModel::Update( void )
 
 		const char *passwd = Info_ValueForKey( info, "password" );
 		servers[i].havePassword = passwd[0] && !stricmp( passwd, "1");
-		const char *legacy = Info_ValueForKey( info, "legacy" );
-		servers[i].isLegacy = legacy[0] && !stricmp( legacy, "1");
 	}
 
 	if( servers.Count() )
@@ -318,10 +303,7 @@ void CMenuGameListModel::AddServerToList(netadr_t adr, const char *info)
 
 	const char *passwd = Info_ValueForKey( info, "password" );
 	server.havePassword = passwd[0] && !stricmp( passwd, "1");
-	const char *legacy = Info_ValueForKey( info, "legacy" );
-	server.isLegacy = legacy[0] && !stricmp( legacy, "1");
-	if( server.isLegacy )
-		server.ping /= 2;
+
 	snprintf( server.pingstr, 64, "%.f ms", server.ping * 1000 );
 	servers.AddToTail( server );
 
