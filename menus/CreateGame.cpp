@@ -286,7 +286,7 @@ void CMenuCreateGame::_Init( void )
 	AddItem( hostName );
 	AddItem( maxClients );
 	AddItem( password );
-#if !(defined(__ANDROID__) || TARGET_OS_IPHONE || defined(__SAILFISH__))
+#if !(defined(__ANDROID__) || defined(__SAILFISH__))
 	AddItem( dedicatedServer );
 #endif
 	// HLTV not yet supported
