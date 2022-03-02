@@ -28,9 +28,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "MenuStrings.h"
 #include "PlayerIntroduceDialog.h"
 
+#if !(defined(__ANDROID__) || defined(__SAILFISH__))
 #define ART_MINIMIZE_N	"gfx/shell/min_n"
 #define ART_MINIMIZE_F	"gfx/shell/min_f"
 #define ART_MINIMIZE_D	"gfx/shell/min_d"
+#endif
+
 #define ART_CLOSEBTN_N	"gfx/shell/cls_n"
 #define ART_CLOSEBTN_F	"gfx/shell/cls_f"
 #define ART_CLOSEBTN_D	"gfx/shell/cls_d"
@@ -69,7 +72,10 @@ private:
 	CMenuPicButton	quit;
 
 	// buttons on top right. Maybe should be drawn if fullscreen == 1?
+	#if !(defined(__ANDROID__) || defined(__SAILFISH__))
 	CMenuBitmap	minimizeBtn;
+	#endif
+
 	CMenuBitmap	quitButton;
 
 	// quit dialog
@@ -243,10 +249,12 @@ void CMenuMain::_Init( void )
 	quitButton.eFocusAnimation = QM_HIGHLIGHTIFFOCUS;
 	quitButton.onReleased = MenuCb( &CMenuMain::QuitDialog );
 
+	#if !(defined(__ANDROID__) || defined(__SAILFISH__))
 	minimizeBtn.SetPicture( ART_MINIMIZE_N, ART_MINIMIZE_F, ART_MINIMIZE_D );
 	minimizeBtn.iFlags = QMF_MOUSEONLY;
 	minimizeBtn.eFocusAnimation = QM_HIGHLIGHTIFFOCUS;
 	minimizeBtn.onReleased.SetCommand( FALSE, "minimize\n" );
+	#endif
 
 	if ( gMenu.m_gameinfo.gamemode == GAME_MULTIPLAYER_ONLY || gMenu.m_gameinfo.startmap[0] == 0 )
 		newGame.SetGrayed( true );
@@ -291,7 +299,11 @@ void CMenuMain::_Init( void )
 		AddItem( customGame );
 
 	AddItem( quit );
+
+#if !(defined(__ANDROID__) || defined(__SAILFISH__))
 	AddItem( minimizeBtn );
+#endif
+
 	AddItem( quitButton );
 }
 
@@ -345,7 +357,9 @@ void CMenuMain::_VidInit( void )
 
 	quit.SetCoord( 72, (bCustomGame) ? (bTrainMap ? 580 : 530) : (bTrainMap ? 530 : 480) );
 
+#if !(defined(__ANDROID__) || defined(__SAILFISH__))
 	minimizeBtn.SetRect( uiStatic.width - 72, 13, 32, 32 );
+#endif
 
 	quitButton.SetRect( uiStatic.width - 36, 13, 32, 32 );
 }
@@ -357,9 +371,12 @@ UI_Main_Precache
 */
 void UI_Main_Precache( void )
 {
+#if !(defined(__ANDROID__) || defined(__SAILFISH__))
 	EngFuncs::PIC_Load( ART_MINIMIZE_N );
 	EngFuncs::PIC_Load( ART_MINIMIZE_F );
 	EngFuncs::PIC_Load( ART_MINIMIZE_D );
+#endif
+
 	EngFuncs::PIC_Load( ART_CLOSEBTN_N );
 	EngFuncs::PIC_Load( ART_CLOSEBTN_F );
 	EngFuncs::PIC_Load( ART_CLOSEBTN_D );
