@@ -1196,7 +1196,7 @@ void UI_Init( void )
 #endif // CS16CLIENT
 
 	// show cl_predict dialog
-	EngFuncs::CvarRegister( "menu_mp_firsttime", "1", FCVAR_ARCHIVE );
+	EngFuncs::CvarRegister( "menu_mp_firsttime", "1", FCVAR_ARCHIVE|FCVAR_LOCALONLY );
 
 	for( CMenuEntry *entry = s_pEntries; entry; entry = entry->m_pNext )
 	{
