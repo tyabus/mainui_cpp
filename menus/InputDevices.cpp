@@ -100,6 +100,7 @@ void CMenuInputDevices::_Init( void )
 				uiInputDevices.mouse.bChecked = false;
 			});
 
+			msgbox.Link( (CMenuInputDevices*)pSelf->Parent() );
 			msgbox.Show();
 		}
 	});
