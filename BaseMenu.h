@@ -121,7 +121,6 @@ typedef struct
 	float	alphaFactor;
 	int xOffset, yOffset;
 
-	bool isForkedEngine;
 	bool needMapListUpdate;
 
 	bool nextFrameActive;
@@ -156,8 +155,6 @@ extern unsigned int	uiColorDkGrey;
 extern unsigned int	uiColorBlack;
 
 // TODO: Move it under namespace?
-
-bool UI_IsXashFWGS( void );
 
 void UI_ScaleCoords( int *x, int *y, int *w, int *h );
 void UI_ScaleCoords( int &x, int &y, int &w, int &h );

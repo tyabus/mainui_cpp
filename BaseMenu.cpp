@@ -88,11 +88,6 @@ const unsigned int g_iColorTable[8] =
 0xFFFFFFFF, // white
 };
 
-bool UI_IsXashFWGS( void )
-{
-	return uiStatic.isForkedEngine;
-}
-
 CMenuEntry::CMenuEntry(const char *cmd, void (*pfnPrecache)(), void (*pfnShow)()) :
 	m_szCommand( cmd ),
 	m_pfnPrecache( pfnPrecache ),
@@ -518,7 +513,7 @@ void UI_DrawMouseCursor( void )
 	HICON		hCursor = NULL;
 	int		i;
 
-	if( uiStatic.hideCursor || UI_IsXashFWGS() ) return;
+	if( uiStatic.hideCursor ) return;
 
 	int cursor = uiStatic.menu.Current()->GetCursor();
 	item = uiStatic.menu.Current()->GetItemByIndex(cursor);
@@ -1210,11 +1205,6 @@ void UI_Init( void )
 	EngFuncs::CreateMapsList( TRUE );
 
 	uiStatic.initialized = true;
-
-	// can be hijacked, but please, don't do it
-	const char *version = EngFuncs::GetCvarString( "host_ver" );
-
-	uiStatic.isForkedEngine = version && version[0];
 
 	// setup game info
 	EngFuncs::GetGameInfo( &gMenu.m_gameinfo );
