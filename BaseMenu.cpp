@@ -625,19 +625,6 @@ void UI_UpdateMenu( float flTime )
 	if( !uiStatic.initialized )
 		return;
 
-	static bool loadStuff = true;
-
-	if( loadStuff )
-	{
-		// load localized strings
-		UI_LoadCustomStrings();
-
-		// load scr
-		UI_LoadScriptConfig();
-
-		loadStuff = false;
-	}
-
 	UI_DrawFinalCredits ();
 
 	if( uiStatic.nextFrameActive )
@@ -1212,7 +1199,13 @@ void UI_Init( void )
 	// trying to load colors.lst
 	UI_ApplyCustomColors ();
 
-	//CR
+	// load localized strings
+	UI_LoadCustomStrings();
+
+	// load scr
+	UI_LoadScriptConfig();
+
+	// CR
 	CMenuPicButton::ClearButtonStack();
 }
 
