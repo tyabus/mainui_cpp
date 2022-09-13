@@ -263,6 +263,12 @@ void UI_ShowMessageBox( const char *text )
 
 void UI_ShowMessageBox_f( void )
 {
+	if( EngFuncs::CmdArgc() <= 1 )
+	{
+		Con_Printf("UI_ShowMessageBox_f: Empty message\n");
+		return;
+	}
+
 	UI_ShowMessageBox( EngFuncs::CmdArgv(1) );
 }
 
