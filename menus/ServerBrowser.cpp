@@ -423,8 +423,10 @@ void CMenuServerBrowser::_Init( void )
 	{
 		if( ((CMenuServerBrowser*)pSelf->Parent())->m_bLanOnly )
 			EngFuncs::CvarSetValue( "public", 0.0f );
-		else EngFuncs::CvarSetValue( "public", 1.0f );
+		else
+			EngFuncs::CvarSetValue( "public", 1.0f );
 
+		EngFuncs::CvarSetValue( "sv_lan", ((CMenuServerBrowser*)pSelf->Parent())->m_bLanOnly );
 		UI_CreateGame_Menu();
 	});
 
