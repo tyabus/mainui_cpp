@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define ART_BANNER_INET		"gfx/shell/head_inetgames"
 #define ART_BANNER_LAN		"gfx/shell/head_lan"
 #define ART_BANNER_LOCK		"gfx/shell/lock"
+#define ART_BANNER_DEDICATE "gfx/shell/dedicated"
 
 struct server_t
 {
@@ -40,6 +41,7 @@ struct server_t
 	char clientsstr[64];
 	char pingstr[64];
 	bool havePassword;
+	bool IsDedicated;
 
 	static int NameCmpAscend( const void *_a, const void *_b )
 	{
@@ -103,7 +105,7 @@ public:
 	void Update() override;
 	int GetColumns() const override
 	{
-		return 5; // havePassword, game, mapname, maxcl, ping
+		return 6; // IsDedicated, havePassword, game, mapname, maxcl, ping
 	}
 	int GetRows() const override
 	{
@@ -111,7 +113,7 @@ public:
 	}
 	ECellType GetCellType( int line, int column ) override
 	{
-		if( column == 0 )
+		if( column == 0 || column == 1 )
 			return CELL_IMAGE_ADDITIVE;
 		return CELL_TEXT;
 	}
@@ -119,11 +121,12 @@ public:
 	{
 		switch( column )
 		{
-		case 0: return servers[line].havePassword ? ART_BANNER_LOCK : NULL;
-		case 1: return servers[line].name;
-		case 2: return servers[line].mapname;
-		case 3: return servers[line].clientsstr;
-		case 4: return servers[line].pingstr;
+		case 0: return servers[line].IsDedicated ? ART_BANNER_DEDICATE : NULL;
+		case 1: return servers[line].havePassword ? ART_BANNER_LOCK : NULL;
+		case 2: return servers[line].name;
+		case 3: return servers[line].mapname;
+		case 4: return servers[line].clientsstr;
+		case 5: return servers[line].pingstr;
 		default: return NULL;
 		}
 	}
@@ -191,6 +194,9 @@ public:
 	int	  refreshTime;
 	int   refreshTime2;
 
+	int   iServerCount;
+	char  szServer[32];
+
 	bool m_bLanOnly;
 private:
 	void _Init() override;
@@ -241,20 +247,23 @@ CMenuServerBrowser::GetGamesList
 void CMenuGameListModel::Update( void )
 {
 	int		i;
-	const char	*info;
+	const char	*info, *passwd, *dedicated;
 
 	// regenerate table data
 	for( i = 0; i < servers.Count(); i++ )
 	{
 		info = servers[i].info;
 
+		passwd = Info_ValueForKey( info, "password" );
+		dedicated = Info_ValueForKey( info, "dedicated" ); // added in 0.19.4
+
 		Q_strncpy( servers[i].name, Info_ValueForKey( info, "host" ), 64 );
 		Q_strncpy( servers[i].mapname, Info_ValueForKey( info, "map" ), 64 );
 		snprintf( servers[i].clientsstr, 64, "%s\\%s", Info_ValueForKey( info, "numcl" ), Info_ValueForKey( info, "maxcl" ) );
 		snprintf( servers[i].pingstr, 64, "%.f ms", servers[i].ping * 1000 );
 
-		const char *passwd = Info_ValueForKey( info, "password" );
 		servers[i].havePassword = passwd[0] && !stricmp( passwd, "1");
+		servers[i].IsDedicated = dedicated[0] && !stricmp( dedicated, "1");
 	}
 
 	if( servers.Count() )
@@ -280,6 +289,7 @@ void CMenuGameListModel::OnActivateEntry( int line )
 void CMenuGameListModel::AddServerToList(netadr_t adr, const char *info)
 {
 	int i;
+	const char *passwd, *dedicated;
 
 	// ignore if duplicated
 	for( i = 0; i < servers.Count(); i++ )
@@ -290,21 +300,24 @@ void CMenuGameListModel::AddServerToList(netadr_t adr, const char *info)
 
 	server_t server;
 
+	passwd = Info_ValueForKey( info, "password" );
+	dedicated = Info_ValueForKey( info, "dedicated" ); // added in 0.19.4
+
 	server.adr = adr;
 	server.ping = Sys_DoubleTime() - serversRefreshTime;
 	server.ping = bound( 0, server.ping, 9.999 );
 	Q_strncpy( server.info, info, sizeof( server.info ));
-
-
 	Q_strncpy( server.name, Info_ValueForKey( info, "host" ), 64 );
 	Q_strncpy( server.mapname, Info_ValueForKey( info, "map" ), 64 );
 	snprintf( server.clientsstr, 64, "%s\\%s", Info_ValueForKey( info, "numcl" ), Info_ValueForKey( info, "maxcl" ) );
 
-
-	const char *passwd = Info_ValueForKey( info, "password" );
-	server.havePassword = passwd[0] && !stricmp( passwd, "1");
+	server.havePassword = passwd[0] && !stricmp( passwd, "1" );
+	server.IsDedicated = dedicated[0] && !stricmp( dedicated, "1" );
 
 	snprintf( server.pingstr, 64, "%.f ms", server.ping * 1000 );
+
+	uiServerBrowser.iServerCount++;
+	snprintf( uiServerBrowser.szServer, sizeof( uiServerBrowser.szServer ), "%s (%d)", L( "Name" ), uiServerBrowser.iServerCount );
 	servers.AddToTail( server );
 
 	if( m_iSortingColumn != -1 )
@@ -358,6 +371,9 @@ void CMenuServerBrowser::JoinGame()
 
 void CMenuServerBrowser::ClearList()
 {
+	uiServerBrowser.iServerCount = 0;
+	snprintf( szServer, sizeof( szServer ), "%s (0)", L( "Name" ) );
+
 	gameListModel.Flush();
 	joinGame->SetGrayed( true );
 }
@@ -414,6 +430,10 @@ void CMenuServerBrowser::_Init( void )
 	AddItem( background );
 	AddItem( banner );
 
+	// Server count
+	iServerCount = 0;
+	snprintf( szServer, sizeof( szServer ), "%s (0)", L( "Name" ) );
+
 	joinGame = AddButton( L( "Join game" ), L( "Join to selected game" ), PC_JOIN_GAME,
 		VoidCb( &CMenuServerBrowser::JoinGame ), QMF_GRAYED );
 	joinGame->onReleasedClActive = msgBox.MakeOpenEvent();
@@ -444,11 +464,12 @@ void CMenuServerBrowser::_Init( void )
 	msgBox.Link( this );
 
 	gameList.SetCharSize( QM_SMALLFONT );
-	gameList.SetupColumn( 0, NULL, 32.0f, true );
-	gameList.SetupColumn( 1, L( "Name" ), 0.40f );
-	gameList.SetupColumn( 2, L( "GameUI_Map" ), 0.25f );
-	gameList.SetupColumn( 3, L( "Players" ), 100.0f, true );
-	gameList.SetupColumn( 4, L( "Ping" ), 120.0f, true );
+	gameList.SetupColumn( 0, NULL, 24.0f, true ); // isdedicated
+	gameList.SetupColumn( 1, NULL, 24.0f, true ); // havepassword
+	gameList.SetupColumn( 2, szServer, 0.40f );
+	gameList.SetupColumn( 3, L( "GameUI_Map" ), 0.25f );
+	gameList.SetupColumn( 4, L( "Players" ), 100.0f, true );
+	gameList.SetupColumn( 5, L( "Ping" ), 120.0f, true );
 	gameList.SetModel( &gameListModel );
 	gameList.bFramedHintText = true;
 	gameList.bAllowSorting = true;
