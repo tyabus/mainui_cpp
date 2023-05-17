@@ -33,7 +33,7 @@ public:
 	CMenuBaseWindow *Current() { return stack.IsValidIndex( active ) ? stack[active] : NULL; }
 	const CMenuBaseWindow *Current() const { return stack.IsValidIndex( active ) ? stack[active] : NULL; }
 
-	bool IsActive( void ) { return !stack.IsEmpty(); }
+	bool IsActive( void ) { return stack.Count() > 0; }
 	int  Count( void ) { return stack.Count(); }
 	void Clean( void )
 	{
