@@ -131,6 +131,21 @@ public:
 		}
 	}
 
+	bool GetCellColors( int line, int column, unsigned int &textColor, bool &force ) const override
+	{
+		CColor color = uiPromptTextColor;
+		textColor = color;
+
+		// allow colorstrings only in hostname
+		if( column != 2 && column != 0 )
+		{
+			force = true;
+			return true;
+		}
+
+		return false;
+	}
+
 	void OnActivateEntry(int line) override;
 
 	void Flush()
