@@ -98,7 +98,6 @@ bool CMenuBaseWindow::KeyDown( int key )
 	if( UI::Key::IsEscape( key ) )
 	{
 		Hide( );
-		PlayLocalSound( uiSoundOut );
 		return true;
 	}
 
