@@ -232,20 +232,22 @@ bool CMenuGameListModel::Sort(int column, bool ascend)
 	m_bAscend = ascend;
 	switch( column )
 	{
-	case 0: return false;
-	case 1:
+	case 0: // is dedicated
+	case 1: // has password
+		return false;
+	case 2:
 		qsort( servers.Base(), servers.Count(), sizeof( server_t ),
 			ascend ? server_t::NameCmpAscend : server_t::NameCmpDescend );
 		return true;
-	case 2:
+	case 3:
 		qsort( servers.Base(), servers.Count(), sizeof( server_t ),
 			ascend ? server_t::MapCmpAscend : server_t::MapCmpDescend );
 		return true;
-	case 3:
+	case 4:
 		qsort( servers.Base(), servers.Count(), sizeof( server_t ),
 			ascend ? server_t::ClientCmpAscend : server_t::ClientCmpDescend );
 		return true;
-	case 4:
+	case 5:
 		qsort( servers.Base(), servers.Count(), sizeof( server_t ),
 			ascend ? server_t::PingCmpAscend : server_t::PingCmpDescend );
 		return true;
