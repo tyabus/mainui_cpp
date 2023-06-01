@@ -137,7 +137,7 @@ public:
 		textColor = color;
 
 		// allow colorstrings only in hostname
-		if( column != 2 && column != 0 )
+		if( column > 2 )
 		{
 			force = true;
 			return true;
@@ -264,18 +264,19 @@ CMenuServerBrowser::GetGamesList
 void CMenuGameListModel::Update( void )
 {
 	int		i;
-	const char	*info, *passwd, *dedicated;
+	const char *info;
+	char passwd[2], dedicated[2];
 
 	// regenerate table data
 	for( i = 0; i < servers.Count(); i++ )
 	{
 		info = servers[i].info;
 
-		passwd = Info_ValueForKey( info, "password" );
-		dedicated = Info_ValueForKey( info, "dedicated" ); // added in 0.19.4
+		Q_strncpy( passwd, Info_ValueForKey( info, "password" ), sizeof( passwd ) );
+		Q_strncpy( dedicated, Info_ValueForKey( info, "dedicated" ), sizeof( dedicated ) ); // added in 0.19.4
 
-		Q_strncpy( servers[i].name, Info_ValueForKey( info, "host" ), 64 );
-		Q_strncpy( servers[i].mapname, Info_ValueForKey( info, "map" ), 64 );
+		Q_strncpy( servers[i].name, Info_ValueForKey( info, "host" ), sizeof( servers[i].name ) );
+		Q_strncpy( servers[i].mapname, Info_ValueForKey( info, "map" ), sizeof( servers[i].mapname ) );
 		snprintf( servers[i].clientsstr, 64, "%s\\%s", Info_ValueForKey( info, "numcl" ), Info_ValueForKey( info, "maxcl" ) );
 		snprintf( servers[i].pingstr, 64, "%.f ms", servers[i].ping * 1000 );
 
@@ -306,7 +307,7 @@ void CMenuGameListModel::OnActivateEntry( int line )
 void CMenuGameListModel::AddServerToList(netadr_t adr, const char *info)
 {
 	int i;
-	const char *passwd, *dedicated;
+	char passwd[2], dedicated[2];
 
 	// ignore if duplicated
 	for( i = 0; i < servers.Count(); i++ )
@@ -317,15 +318,15 @@ void CMenuGameListModel::AddServerToList(netadr_t adr, const char *info)
 
 	server_t server;
 
-	passwd = Info_ValueForKey( info, "password" );
-	dedicated = Info_ValueForKey( info, "dedicated" ); // added in 0.19.4
+	Q_strncpy( passwd, Info_ValueForKey( info, "password" ), sizeof( passwd ) );
+	Q_strncpy( dedicated, Info_ValueForKey( info, "dedicated" ), sizeof( dedicated ) );
 
 	server.adr = adr;
 	server.ping = Sys_DoubleTime() - serversRefreshTime;
 	server.ping = bound( 0, server.ping, 9.999 );
 	Q_strncpy( server.info, info, sizeof( server.info ));
-	Q_strncpy( server.name, Info_ValueForKey( info, "host" ), 64 );
-	Q_strncpy( server.mapname, Info_ValueForKey( info, "map" ), 64 );
+	Q_strncpy( server.name, Info_ValueForKey( info, "host" ), sizeof( server.name ) );
+	Q_strncpy( server.mapname, Info_ValueForKey( info, "map" ), sizeof( server.mapname ) );
 	snprintf( server.clientsstr, 64, "%s\\%s", Info_ValueForKey( info, "numcl" ), Info_ValueForKey( info, "maxcl" ) );
 
 	server.havePassword = passwd[0] && !stricmp( passwd, "1" );
