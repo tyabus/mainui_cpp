@@ -74,7 +74,7 @@ void CAdvancedControls::GetConfig( )
 	mlook = (kbutton_s *)EngFuncs::KEY_GetState( "in_mlook" );
 	if( mlook )
 	{
-		if( mlook && mlook->state & 1 )
+		if( mlook->state & 1 )
 			mouseLook.bChecked = true;
 		else
 			mouseLook.bChecked = false;
