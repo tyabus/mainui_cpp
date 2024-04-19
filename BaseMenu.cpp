@@ -497,63 +497,6 @@ int UI_DrawString( HFont font, int x, int y, int w, int h,
 	return maxX;
 }
 
-#ifdef _WIN32
-#include <windows.h> // DrawMouseCursor
-#endif
-
-/*
-=================
-UI_DrawMouseCursor
-=================
-*/
-void UI_DrawMouseCursor( void )
-{	
-#ifdef _WIN32
-	CMenuBaseItem	*item;
-	HICON		hCursor = NULL;
-	int		i;
-
-	if( uiStatic.hideCursor ) return;
-
-	int cursor = uiStatic.menu.Current()->GetCursor();
-	item = uiStatic.menu.Current()->GetItemByIndex(cursor);
-
-	if( item->iFlags & QMF_HASMOUSEFOCUS ) 	// fast approach
-	{
-		if ( item->iFlags & QMF_GRAYED )
-		{
-			hCursor = (HICON)LoadCursor( NULL, (LPCTSTR)OCR_NO );
-		}
-	}
-	else
-	{
-		FOR_EACH_VEC( uiStatic.menu.Current()->m_pItems, i )
-		{
-			item = (CMenuBaseItem *)uiStatic.menu.Current()->GetItemByIndex(cursor);
-
-			if ( !item->IsVisible() )
-				continue;
-
-			if( !(item->iFlags & QMF_HASMOUSEFOCUS) )
-				continue;
-
-			if ( item->iFlags & QMF_GRAYED )
-			{
-				hCursor = (HICON)LoadCursor( NULL, (LPCTSTR)OCR_NO );
-			}
-			break;
-		}
-	}
-
-	if( !hCursor )
-		hCursor = (HICON)LoadCursor( NULL, (LPCTSTR)OCR_NORMAL );
-
-	EngFuncs::SetCursor( hCursor );
-#else // _WIN32
-	// TODO: Unified LoadCursor interface extension
-#endif // _WIN32
-}
-
 const char *COM_ExtractExtension( const char *s )
 {
 	int len = strlen( s );
@@ -675,9 +618,6 @@ void UI_UpdateMenu( float flTime )
 			first = FALSE;
 		}
 	}
-
-	// draw cursor
-	UI_DrawMouseCursor();
 
 	// delay playing the enter sound until after the menu has been
 	// drawn, to avoid delay while caching images

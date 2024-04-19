@@ -96,7 +96,6 @@ protected:
 private:
 	CMenuBaseWindow(); // remove
 
-	friend void UI_DrawMouseCursor( void ); // HACKHACK: Cursor should be set by menu item
 	friend void UI_UpdateMenu( float flTime );
 
 	bool IsAbsolutePositioned( void ) const override { return true; }
