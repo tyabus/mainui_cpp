@@ -26,8 +26,6 @@ project (MAINUI)
 include(FWGSLib)
 
 # By default we require C++11 support.
-# But it can be overriden with -DMY_COMPILER_SUCKS compiler option
-# It's not recommended and may not work(as it's done only for MSVC6 support)
 set(CMAKE_CXX_STANDARD 11)
 
 set(MAINUI_LIBRARY xashmenu)
@@ -144,10 +142,6 @@ add_library (${MAINUI_LIBRARY} SHARED ${MAINUI_SOURCES})
 
 if(NOT WIN32 AND NOT MINGW)
 	fwgs_add_compile_options(C -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable)
-else()
-
-	# Only for MSVC6 compatibility mode! Newer VC does fail with this define
-	# add_definitions(-DMY_COMPILER_SUCKS)
 endif()
 
 if(NOT XASH_SDK)

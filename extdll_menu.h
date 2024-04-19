@@ -37,11 +37,8 @@ GNU General Public License for more details.
 #pragma warning(disable : 4244)	// conversion from 'float' to 'int', possible loss of data
 #pragma warning(disable : 4520) // multiple default constructors specified
 #pragma warning(disable : 4996) // This function or variable may be unsafe
-// disable c++11 on old msvc
-#if _MSC_VER < 1800 && !defined MY_COMPILER_SUCKS
-#define MY_COMPILER_SUCKS
 #endif
-#endif
+
 // Misc C-runtime library headers
 #include <assert.h>
 #include <string.h>
@@ -49,13 +46,6 @@ GNU General Public License for more details.
 #include <stdlib.h>
 #include <math.h>
 #include <ctype.h>
-
-#ifdef MY_COMPILER_SUCKS
-// C++11 keywords
-#define final
-#define constexpr
-#define override
-#endif
 
 #ifdef bound
 #undef bound

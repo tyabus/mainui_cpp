@@ -27,25 +27,8 @@ GNU General Public License for more details.
 // SET_EVENT( event, callback )
 // same as MULTI, but does not require code block. Inteded for one-line events
 
-#if defined(MY_COMPILER_SUCKS)
-// WARN: can't rely on "item" name, because it can be something like "ptr->member"
-// So we use something more valid for struct name
-#define PASTE(x,y) __##x##_##y
-#define PASTE2(x,y) PASTE(x,y)
-#define EVNAME(x) PASTE2(x, __LINE__)
-
-#define SET_EVENT_MULTI( event, callback ) \
-	typedef struct                                             \
-	{                                                          \
-		static void __cb( CMenuBaseItem *pSelf, void *pExtra ) \
-		callback                                               \
-	} EVNAME( _ev ); (event) = EVNAME( _ev )::__cb
-
-#else
-
 #define SET_EVENT_MULTI( event, callback ) \
 	(event) = [](CMenuBaseItem *pSelf, void *pExtra) callback
-#endif
 
 #define SET_EVENT( event, callback ) SET_EVENT_MULTI( event, { callback; } )
 
