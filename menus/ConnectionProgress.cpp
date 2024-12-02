@@ -188,7 +188,7 @@ void CMenuConnectionProgress::Disconnect()
 		HandleDisconnect();
 	}
 
-	EngFuncs::ClientCmd( false, "cmd disconnect;endgame disconnect\n");
+	EngFuncs::ClientCmd( false, "disconnect\n");
 }
 
 void CMenuConnectionProgress::_Init( void )
