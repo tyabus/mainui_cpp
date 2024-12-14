@@ -323,7 +323,7 @@ UI_Main_Init
 */
 void CMenuMain::VidInit( bool connected )
 {
-	bool isGameLoaded = EngFuncs::GetCvarFloat( "host_gameloaded" ) != 0.0f;
+	bool isInGame = EngFuncs::ClientInGame();
 	bool isSingle = gpGlobals->maxClients < 2;
 
 	CMenuPicButton::ClearButtonStack();
@@ -338,7 +338,7 @@ void CMenuMain::VidInit( bool connected )
 	newGame.SetCoord( 72, 280 );
 	hazardCourse.SetCoord( 72, 330 );
 
-	if( isGameLoaded && isSingle )
+	if( isInGame && isSingle )
 	{
 		saveRestore.SetNameAndStatus( L( "Save\\Load Game" ), L( "StringsList_192" ) );
 		saveRestore.SetPicture( PC_SAVE_LOAD_GAME );
@@ -352,7 +352,7 @@ void CMenuMain::VidInit( bool connected )
 	if( connected )
 	{
 		resumeGame.Show();
-		if( !isGameLoaded && !isSingle )
+		if( isInGame && !isSingle )
 		{
 			disconnect.Show();
 			console.pos.y = 130;
